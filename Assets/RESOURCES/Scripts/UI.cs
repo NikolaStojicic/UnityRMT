@@ -1,44 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using TMPro;
 public class UI : MonoBehaviour
 {
+    [SerializeField]
+    public TextMeshProUGUI status;
+    [SerializeField]
+    public TextMeshProUGUI avg;
+
+    [SerializeField]
+    public TextMeshProUGUI input;
+
+    private int numOfCars;
+    private float timeSpentOfAllCars;
+
+
+    private AllLightsController allLightsController;
     private TrafficController trafficController;
-    private static bool addOnce;
     private List<string> listaAutaSample;
+
     private void Start()
     {
-        trafficController = GameObject.FindObjectOfType<TrafficController>();
-        listaAutaSample = new List<string>();
-        listaAutaSample.Add("Left");
-        listaAutaSample.Add("Right");
-        listaAutaSample.Add("Straight");
-        if (!addOnce)
-        {
-            trafficController.spawnCarFromLightRandomDirections("Way3",10);
-            trafficController.spawnCarFromLightRandomDirections("Way1",10);
-            trafficController.spawnCarFromLightRandomDirections("Way4",10);
-            trafficController.spawnCarFromLightRandomDirections("Way2",10);
-        }
-        addOnce = true;
+        numOfCars = 0;
+        timeSpentOfAllCars = 0;
     }
 
+    public void addTime(float time)
+    {
+        numOfCars++;
+        timeSpentOfAllCars += time;
+        avg.text = "Time spent on scene (avg): " + System.Math.Round((timeSpentOfAllCars / numOfCars), 2) + " sec.";
+    }
 
-    public void addUp()
+    public void connectClicked()
     {
-        trafficController.spawnCarFromLight("Way3", listaAutaSample);
+        status.text = "Status:\nConnceted to server: " + input.text + " successfuly!";
     }
-    public void addBot()
+
+    public void chkBox()
     {
-        trafficController.spawnCarFromLight("Way1", listaAutaSample);
+        if (allLightsController == null)
+            allLightsController = GameObject.FindObjectOfType<AllLightsController>();
+        Toggle tg = GetComponent<Toggle>();
+        var light = allLightsController.GetType().GetField("light" + tg.name);
+        light.SetValue(allLightsController, tg.isOn);
     }
-    public void addRight()
-    {
-        trafficController.spawnCarFromLight("Way4", listaAutaSample);
-    }
-    public void addLeft()
-    {
-        trafficController.spawnCarFromLight("Way2", listaAutaSample);
-    }
+
 }

@@ -64,12 +64,15 @@ public class LightController : MonoBehaviour
     {
         setTrafficLightStatus("Yellow");
         yield return new WaitForSeconds(sec);
+        setTrafficLightsOff();
         setTrafficLightStatus("Green");
     }
     IEnumerator animateLightsOff(float sec)
     {
+        setTrafficLightsOff();
         setTrafficLightStatus("Yellow");
         yield return new WaitForSeconds(sec);
+        setTrafficLightsOff();
         setTrafficLightStatus("Red");
     }
 
@@ -87,7 +90,7 @@ public class LightController : MonoBehaviour
         if (!upLights.ContainsKey(status)) return;
 
         // Manipulute lights
-        setTrafficLightsOff();
+        //setTrafficLightsOff();
         upLights[status].GetComponent<MeshRenderer>().material = lightMaterialsOn[status];
         downLights[status].GetComponent<MeshRenderer>().material = lightMaterialsOn[status];
 

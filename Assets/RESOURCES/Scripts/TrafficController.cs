@@ -14,14 +14,45 @@ public class TrafficController : MonoBehaviour
     [SerializeField]
     private List<GameObject> carPrefabList;
 
+    List<string> directions;
+    private List<string> __wayHelper;
+
+
     private Dictionary<string, GameObject> ways;
     // Start is called before the first frame update
     void Start()
     {
         initAllWays();
+        moreInits();
+      
+        carDistance = 9;
+        
 
-        carDistance = 7;
+        spawnCarFromLightRandomDirections("Way3", 0);
+        spawnCarFromLightRandomDirections("Way1", 0);
+        spawnCarFromLightRandomDirections("Way4", 0);
+        spawnCarFromLightRandomDirections("Way2", 0);
+
+        //Dodavanje random automobila
+        InvokeRepeating("randomCarSpwaner", 0.5f, 3f);
     }
+    private void moreInits()
+    {
+        directions = new List<string>();
+        directions.Add("Left");
+        directions.Add("Right");
+        directions.Add("Straight");
+
+        __wayHelper = new List<string>();
+        for (int i = 1; i <= 4; i++)
+            __wayHelper.Add("Way" + i);
+    }
+
+    public void randomCarSpwaner()
+    {
+        addCar(__wayHelper[Random.Range(0,4)], directions[Random.Range(0, 3)]);
+    }
+
 
     /// <summary>
     /// Spawns from light to back with random routing. Nummber of cars is determined by numOfCars.
@@ -30,10 +61,7 @@ public class TrafficController : MonoBehaviour
     /// <param name="numOfCars">Number of cars that is going to be spawned.</param>
     public void spawnCarFromLightRandomDirections(string track, int numOfCars)
     {
-        List<string> directions = new List<string>();
-        directions.Add("Left");
-        directions.Add("Right");
-        directions.Add("Straight");
+
         GameObject way = ways[track];
         GameObject spawner = getSpawnerForWay(way);
 
