@@ -6,12 +6,10 @@ using TMPro;
 public class UI : MonoBehaviour
 {
     [SerializeField]
-    public TextMeshProUGUI status;
-    [SerializeField]
     public TextMeshProUGUI avg;
 
     [SerializeField]
-    public TextMeshProUGUI input;
+    public TMP_InputField input;
 
     private int numOfCars;
     private float timeSpentOfAllCars;
@@ -23,6 +21,7 @@ public class UI : MonoBehaviour
 
     private void Start()
     {
+        input.text = "18.188.14.65:18138";
         numOfCars = 0;
         timeSpentOfAllCars = 0;
     }
@@ -36,7 +35,12 @@ public class UI : MonoBehaviour
 
     public void connectClicked()
     {
-        status.text = "Status:\nConnceted to server: " + input.text + " successfuly!";
+        string ip = input.text.Split(':')[0];
+        int port = int.Parse(input.text.Split(':')[1]);
+
+        Debug.Log(ip + port);
+        //GameObject.FindObjectOfType<TCPListener>().makeConnection(ip, port);
+        GameObject.FindObjectOfType<TCPListener>().makeConnection(ip, port);
     }
 
     public void chkBox()

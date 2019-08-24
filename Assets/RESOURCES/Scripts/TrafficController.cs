@@ -24,14 +24,14 @@ public class TrafficController : MonoBehaviour
     {
         initAllWays();
         moreInits();
-      
-        carDistance = 9;
-        
 
-        spawnCarFromLightRandomDirections("Way3", 0);
-        spawnCarFromLightRandomDirections("Way1", 0);
-        spawnCarFromLightRandomDirections("Way4", 0);
-        spawnCarFromLightRandomDirections("Way2", 0);
+        carDistance = 9;
+
+
+        spawnCarFromLightRandomDirections("Way3", 3);
+        spawnCarFromLightRandomDirections("Way1", 3);
+        spawnCarFromLightRandomDirections("Way4", 3);
+        spawnCarFromLightRandomDirections("Way2", 3);
 
         //Dodavanje random automobila
         InvokeRepeating("randomCarSpwaner", 0.5f, 3f);
@@ -39,7 +39,7 @@ public class TrafficController : MonoBehaviour
     private void moreInits()
     {
         directions = new List<string>();
-        directions.Add("Left");
+        // directions.Add("Left");
         directions.Add("Right");
         directions.Add("Straight");
 
@@ -50,7 +50,7 @@ public class TrafficController : MonoBehaviour
 
     public void randomCarSpwaner()
     {
-        addCar(__wayHelper[Random.Range(0,4)], directions[Random.Range(0, 3)]);
+        addCar(__wayHelper[Random.Range(0, 4)], directions[Random.Range(0, 2)]);
     }
 
 
@@ -73,7 +73,7 @@ public class TrafficController : MonoBehaviour
             GameObject carPrefab = carPrefabList[Random.Range(0, carPrefabList.Count)];
             carPrefab.transform.rotation = way.transform.rotation;
 
-            WaypointCircuit path = getPathFromWayPoint(way, directions[Random.Range(0,3)]);
+            WaypointCircuit path = getPathFromWayPoint(way, directions[Random.Range(0, 2)]);
             carPrefab.GetComponent<WaypointProgressTracker>().circuit = path;
             if (track == "Way1")
             {
@@ -144,7 +144,7 @@ public class TrafficController : MonoBehaviour
                 Vector3 compensateForRotation = Quaternion.Euler(0, -90, 0) * spawner.transform.localPosition;
                 carPrefab.transform.position = currentPosition + compensateForRotation;
                 currentPosition += new Vector3(carDistance, 0, 0);
-            }   
+            }
             Instantiate(carPrefab, transform);
         }
     }
