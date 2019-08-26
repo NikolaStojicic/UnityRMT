@@ -20,14 +20,17 @@ public class TCPListener : MonoBehaviour
     private int port;
     private string ip;
 
-
+    /// <summary>
+    /// Starts new thread for controling traffic lights.
+    /// </summary>
+    /// <param name="ip"></param>
+    /// <param name="port"></param>
     public void makeConnection(string ip, int port)
     {
         this.port = port;
         this.ip = ip;
         t = new Thread(tcpListener);
         t.Start();
-        
     }
 
     private void OnDestroy()
@@ -38,19 +41,16 @@ public class TCPListener : MonoBehaviour
 
     public void tcpListener()
     {
-
-        TcpListener server = null;
         try
         {
             string textToSend = DateTime.Now.ToString();
             TcpClient client = new TcpClient(this.ip, this.port);
             NetworkStream nwStream = client.GetStream();
             byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(textToSend);
-            Debug.Log("Status:\nConnceted to server: " + ip + ":" + port + " successfuly!");
-  
+            ui.statusUIThreadSafe = "Status:\nConnceted to server: " + ip + ":" + port + " successfuly!";
+            ui.isConnected = true;
             while (true)
             {
-
                 byte[] bytesToRead = new byte[client.ReceiveBufferSize];
                 int bytesRead = nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
                 string stringData = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
@@ -75,13 +75,13 @@ public class TCPListener : MonoBehaviour
             }
         }
 
-        catch (SocketException)
+        catch (Exception e)
         {
-            Debug.Log("Connection lost!");
+            Debug.Log(e.Message);
+            ui.isConnected = false;
+            ui.statusUIThreadSafe = "Error:\nConnection lost, " + e.Message;
+            t.Abort();
         }
-        finally
-        {
-            server.Stop();
-        }
+
     }
 }

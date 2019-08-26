@@ -1,81 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using System.Text;
-using System.Threading;
+using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using TMPro;
+using System.Text;
+using System.Threading;
 
 public class ClientConnection : MonoBehaviour
 {
-    private string ip;
-    private int port;
-    UI UIController;
-    private TcpClient client = null;
+    [SerializeField]
+    UI ui;
 
-    string message;
-    int byteCount;
-    NetworkStream stream;
-    byte[] sendData;
+    Thread t;
+
+    private int port;
+    private string ip;
+
+    public byte[] dataToSend = null;
 
     public void makeConnection(string ip, int port)
     {
-        this.ip = ip;
         this.port = port;
-        UIController = GameObject.FindObjectOfType<UI>();
+        this.ip = ip;
+        t = new Thread(tcpListener);
+        t.Start();
+    }
 
+    private void OnDestroy()
+    {
+        t.Abort();
+    }
+
+
+    public void tcpListener()
+    {
         try
         {
-            client = new TcpClient(ip, port);
-            //UIController.status.text = "Status:\nConnceted to server: " + ip + ":" + port + " successfuly!";
-
-
-            message = "Hello server!";
-
-            byteCount = Encoding.ASCII.GetByteCount(message);
-            sendData = new byte[byteCount];
-            sendData = Encoding.ASCII.GetBytes(message);
+            while (true)
+            {
+                string textToSend = DateTime.Now.ToString();
+                TcpClient client = new TcpClient(this.ip, this.port);
+                NetworkStream nwStream = client.GetStream();
+                byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(textToSend);
+                ui.statusUIThreadSafe = "Status:\nImage sent successfuly!";
+                ui.isConnected = true;
+                Debug.Log(dataToSend);
+                if (dataToSend != null)
+                {
+                    nwStream.Write(dataToSend, 0, dataToSend.Length);
+                    Debug.Log("Sent : " + dataToSend.Length);
+                    nwStream.Close();
+                    Thread.Sleep(10000);
+                }
+            }
         }
-        catch (System.Net.Sockets.SocketException e)
+
+        catch (Exception e)
         {
             Debug.Log(e.Message);
-            Debug.Log("FEJLOVO SAM BURAZ");
-          //  UIController.status.text = "Status:\nConnection cannot be established to server: " + ip + ":" + port;
+            ui.isConnected = false;
+            ui.statusUIThreadSafe = "Error:\nConnection lost, " + e.Message;
+            t.Abort();
         }
-    }
-
-    public void sendPicture(byte[] bytes)
-    {
-        try
-        {
-
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Close();
-        }
-        catch (System.Exception)
-        {
-            client = null;
-
-        }
-    }
-
-    private void Update()
-    {
-        //if (client != null)
-        //{
-        //    try
-        //    {
-        //        stream.Write(sendData, 0, sendData.Length);
-        //    }
-        //    catch (System.Exception)
-        //    {
-        //        client = null;
-        //        UIController.status.text = "Status:\nConnection lost!";
-        //    }
-        //    Debug.Log("Uspesno poslata poruka");
-        //}
 
     }
 }
