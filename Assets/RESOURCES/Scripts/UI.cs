@@ -48,6 +48,11 @@ Waiting for the connection...";
         avg.text = "Time spent on scene (avg): " + System.Math.Round((timeSpentOfAllCars / numOfCars), 2) + " sec.";
     }
 
+    public void camButton()
+    {
+        GameObject.FindObjectOfType<CameraSwitchNikola>().nextCam();
+    }
+
     public void connectClicked()
     {
         try

@@ -19,7 +19,7 @@ public class HiResScreenShots : MonoBehaviour
     private void Start()
     {
         camera = GetComponent<Camera>();
-        InvokeRepeating("repeater", 0f, 9f);
+        InvokeRepeating("repeater", 0f, 2f);
     }
 
 

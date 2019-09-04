@@ -8,7 +8,7 @@ public class CameraSwitchNikola : MonoBehaviour
     /// <summary>
     /// Switches between cameras by disabling them and enabling in order.
     /// </summary>
-    private void nextCam()
+    public void nextCam()
     {
         for (int i = 0; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(false);
